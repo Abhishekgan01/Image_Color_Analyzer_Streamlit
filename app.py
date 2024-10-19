@@ -121,17 +121,24 @@ def main():
                                            title="3D Scatter Plot", color_discrete_map=color_discrete_map)
             st.plotly_chart(scatter_3d_fig)
 
-            # Violin Plot
-            st.subheader("Violin Plot of Color Counts")
-            violin_fig = px.violin(pix_df, y='Counts', x='labels', color='labels', box=True, points="all",
-                                   title="Violin Plot", color_discrete_map=color_discrete_map)
-            st.plotly_chart(violin_fig)
+            # Histogram
+            st.subheader("Histogram of Color Counts")
+            hist_fig = px.histogram(pix_df, x='labels', y='Counts', color='labels',
+                                    title="Histogram", color_discrete_map=color_discrete_map)
+            st.plotly_chart(hist_fig)
 
-            # Boxplot
-            st.subheader("Boxplot of Color Counts")
-            box_fig = px.box(pix_df, y='Counts', x='labels', color='labels',
-                             title="Boxplot", color_discrete_map=color_discrete_map)
-            st.plotly_chart(box_fig)
+            # Bubble Chart
+            st.subheader("Bubble Chart of Color Counts")
+            bubble_fig = px.scatter(pix_df, x='labels', y='Counts', size='Counts', color='labels',
+                                    title="Bubble Chart", color_discrete_map=color_discrete_map)
+            st.plotly_chart(bubble_fig)
+
+            # Heatmap
+            st.subheader("Heatmap of Color Labels and Counts")
+            heatmap_data = pix_df.pivot_table(index='labels', values='Counts', aggfunc='sum').reset_index()
+            heatmap_fig = px.imshow(heatmap_data[['Counts']], labels=dict(x="Labels", y="Counts"),
+                                    x=heatmap_data['labels'], title="Heatmap")
+            st.plotly_chart(heatmap_fig)
 
     else:
         st.subheader("About")
