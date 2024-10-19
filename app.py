@@ -91,11 +91,12 @@ def main():
             # Map color labels to hex colors for consistency in Plotly
             color_discrete_map = {row['labels']: row['hex'] for _, row in pix_df.iterrows()}
 
-            # Plot pie chart with specific color mapping
+            # Plot pie chart
             p01 = px.pie(pix_df, names='labels', values='Counts', color='labels',
                          color_discrete_map=color_discrete_map)
             st.plotly_chart(p01)
 
+            # Plot bar chart
             col1, col2 = st.columns([1, 2])
             with col1:
                 st.info("Color Distribution")
@@ -105,6 +106,32 @@ def main():
                 p02 = px.bar(pix_df, x='labels', y='Counts', color='labels',
                              color_discrete_map=color_discrete_map)
                 st.plotly_chart(p02)
+
+            # New Graphs
+
+            # Line Chart
+            st.subheader("Line Chart of Color Distribution")
+            line_fig = px.line(pix_df, x='labels', y='Counts', title="Line Chart")
+            st.plotly_chart(line_fig)
+
+            # 3D Scatter Plot
+            st.subheader("3D Scatter Plot of Color Clusters")
+            # To demonstrate, we're plotting labels, counts, and index as z-axis.
+            scatter_3d_fig = px.scatter_3d(pix_df, x='labels', y='Counts', z=pix_df.index, color='labels',
+                                           title="3D Scatter Plot", color_discrete_map=color_discrete_map)
+            st.plotly_chart(scatter_3d_fig)
+
+            # Violin Plot
+            st.subheader("Violin Plot of Color Counts")
+            violin_fig = px.violin(pix_df, y='Counts', x='labels', color='labels', box=True, points="all",
+                                   title="Violin Plot", color_discrete_map=color_discrete_map)
+            st.plotly_chart(violin_fig)
+
+            # Boxplot
+            st.subheader("Boxplot of Color Counts")
+            box_fig = px.box(pix_df, y='Counts', x='labels', color='labels',
+                             title="Boxplot", color_discrete_map=color_discrete_map)
+            st.plotly_chart(box_fig)
 
     else:
         st.subheader("About")
