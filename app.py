@@ -42,6 +42,11 @@ def rgb_to_color_name(rgb_color):
     return closest_color_name
 
 
+def rgb_to_hex(rgb_color):
+    """ Convert RGB color to Hex format """
+    return mcolors.to_hex([val / 255 for val in rgb_color])
+
+
 def prep_image(raw_img):
     modified_img = cv2.resize(raw_img, (900, 600), interpolation=cv2.INTER_AREA)
     modified_img = modified_img.reshape(modified_img.shape[0] * modified_img.shape[1], 3)
@@ -55,7 +60,10 @@ def color_analysis(img):
     counts = Counter(color_labels)
     ordered_colors = [center_colors[i] for i in counts.keys()]
     color_names = [rgb_to_color_name(ordered_colors[i]) for i in counts.keys()]
-    df = pd.DataFrame({'labels': color_names, 'Counts': counts.values()})
+    hex_colors = [rgb_to_hex(ordered_colors[i]) for i in counts.keys()]
+    
+    # Create a DataFrame with color names and counts
+    df = pd.DataFrame({'labels': color_names, 'Counts': counts.values(), 'hex': hex_colors})
     return df
 
 
@@ -80,7 +88,12 @@ def main():
             modified_image = prep_image(myimage)
             pix_df = color_analysis(modified_image)
 
-            p01 = px.pie(pix_df, names='labels', values='Counts', color='labels')
+            # Map color labels to hex colors for consistency in Plotly
+            color_discrete_map = {row['labels']: row['hex'] for _, row in pix_df.iterrows()}
+
+            # Plot pie chart with specific color mapping
+            p01 = px.pie(pix_df, names='labels', values='Counts', color='labels',
+                         color_discrete_map=color_discrete_map)
             st.plotly_chart(p01)
 
             col1, col2 = st.columns([1, 2])
@@ -89,7 +102,8 @@ def main():
                 st.write(pix_df)
 
             with col2:
-                p02 = px.bar(pix_df, x='labels', y='Counts', color='labels')
+                p02 = px.bar(pix_df, x='labels', y='Counts', color='labels',
+                             color_discrete_map=color_discrete_map)
                 st.plotly_chart(p02)
 
     else:
