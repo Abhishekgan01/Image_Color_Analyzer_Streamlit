@@ -135,9 +135,9 @@ def main():
 
             # Heatmap
             st.subheader("Heatmap of Color Labels and Counts")
-            heatmap_data = pix_df.pivot_table(index='labels', values='Counts', aggfunc='sum').reset_index()
-            heatmap_fig = px.imshow(heatmap_data[['Counts']], labels=dict(x="Labels", y="Counts"),
-                                    x=heatmap_data['labels'], title="Heatmap")
+            heatmap_data = pix_df[['labels', 'Counts']]
+            heatmap_fig = px.density_heatmap(heatmap_data, x='labels', y='Counts',
+                                 title="Heatmap of Color Counts", nbinsx=10, nbinsy=10)
             st.plotly_chart(heatmap_fig)
 
     else:
